@@ -1,0 +1,14 @@
+{
+  "name": "psst",
+  "description": "Please Send Smarter Thoughts: ask Sonnet, Haiku, Opus, or Fable one question from inside any Claude Code session without switching models. /s /h /o /f (or /sonnet /haiku /opus /fable). Replies are tagged and short, and noisy work runs in a subagent so the session never compacts.",
+  "version": "0.1.0",
+  "author": {
+    "name": "scr1p7k177y",
+    "email": "scriptkitty@walang.studio"
+  },
+  "homepage": "https://github.com/walangstudio/psst",
+  "repository": "https://github.com/walangstudio/psst",
+  "license": "MIT",
+  "keywords": ["models", "sonnet", "haiku", "opus", "fable", "second-opinion", "slash-commands"],
+  "commands": "./commands"
+}
