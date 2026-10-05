@@ -9,6 +9,7 @@
 # the expected model ran per the transcript (an untagged reply only warns) (inline, or in a subagent for /h from a bigger session).
 # Fable needs usage credits on some accounts: drop it with SESSIONS="haiku sonnet opus" CMDS="s h o".
 # Narrow with SESSIONS="opus" CMDS="h" SCENARIOS="suite" JOBS=4 MAX_WORDS=200 (default cap per scenario: recall 60, remark 120, edit/log 150, suite 250).
+# ps ph po pf in CMDS run /psst <s|h|o|f> instead of the shortcut: CMDS="po ph".
 set -uo pipefail
 cmds=$(dirname "$0")/commands
 for p in sonnet:s haiku:h opus:o fable:f; do
@@ -24,14 +25,16 @@ export work
 cell() {
   local sm=$1 c=$2 sc=$3
   local -A full=([s]=sonnet [h]=haiku [o]=opus [f]=fable)
-  local target=${full[$c]} dir=$work/$sm-$c-$sc
+  local key=${c#p} run="/$c"
+  [[ $c == p? ]] && run="/psst $key"
+  local target=${full[$key]} dir=$work/$sm-$c-$sc
   mkdir -p "$dir"
   cd "$dir" || return
   local word="W$RANDOM$RANDOM" limit=$((RANDOM % 90 + 10)) why=() ask
   local sid
   sid=$(claude -p "Our project codename is $word. We agreed the retry limit is $limit. Reply OK." \
         --model "$sm" --output-format json 2>/dev/null | jq -r .session_id)
-  [ -n "$sid" ] && [ "$sid" != null ] || { echo "FAIL $sm /$c $sc: seed failed"; return; }
+  [ -n "$sid" ] && [ "$sid" != null ] || { echo "FAIL $sm $run $sc: seed failed"; return; }
 
   case $sc in
     recall) ask="what is our project codename?" ;;
@@ -59,7 +62,7 @@ EOS
   esac
 
   local reply
-  reply=$(claude -p "/$c $ask" --resume "$sid" --model "$sm" --dangerously-skip-permissions 2>/dev/null)
+  reply=$(claude -p "$run $ask" --resume "$sid" --model "$sm" --dangerously-skip-permissions 2>/dev/null)
   local file
   file=$(ls ~/.claude/projects/*/"$sid.jsonl" 2>/dev/null | head -1)
   local sdir=${file%.jsonl}
@@ -97,8 +100,8 @@ EOS
   local cmdmodels sub
   cmdmodels=$(jq -r 'select(.type=="assistant") | .message.model' "$file" | sed 1d | sort -u | tr '\n' ' ')
   sub=$( [ -d "$sdir" ] && find "$sdir" -name '*.jsonl' -exec jq -r 'select(.type=="assistant") | .message.model' {} + | sort -u | tr '\n' ' ')
-  if [[ $target == haiku && $sm != haiku ]]; then
-    [[ $sub == *haiku* && $cmdmodels != *haiku* ]] || why+=("haiku not isolated")
+  if [[ $target != "$sm" && ( $target == haiku || $c == p? ) ]]; then
+    [[ $sub == *$target* && $cmdmodels != *$target* ]] || why+=("$target not isolated")
   else
     [[ $cmdmodels == *$target* ]] || why+=("$target did not run")
   fi
@@ -112,8 +115,8 @@ EOS
   fi
 
   local status=PASS; (( ${#why[@]} )) && status=FAIL
-  printf '%s %-6s /%s %-6s words=%-3s dumped=%-3s cmd=[%s] sub=[%s] %s\n' \
-    "$status" "$sm" "$c" "$sc" "$words" "$dumped" "$cmdmodels" "$sub" "$warn${why[*]:+ -> ${why[*]}}"
+  printf '%s %-6s %-7s %-6s words=%-3s dumped=%-3s cmd=[%s] sub=[%s] %s\n' \
+    "$status" "$sm" "$run" "$sc" "$words" "$dumped" "$cmdmodels" "$sub" "$warn${why[*]:+ -> ${why[*]}}"
   [[ $status == FAIL ]] && printf '  reply: %s\n' "$(tr '\n' ' ' <<<"${reply:0:300}")"
   local pdir; pdir=$(dirname "$file")
   [[ $pdir == */-tmp-* ]] && rm -rf "$pdir"

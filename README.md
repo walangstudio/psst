@@ -1,6 +1,6 @@
 # psst
 
-[![version](https://img.shields.io/badge/version-0.1.0-blue)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.2.0-blue)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 **Please Send Smarter Thoughts.**
@@ -24,6 +24,15 @@ The other model answers with your session's context. Your session model stays pu
 | `/h` | `/haiku` | Haiku |
 | `/o` | `/opus` | Opus |
 | `/f` | `/fable` | Fable |
+
+Or name the model as you go:
+
+```
+/psst opus is this retry loop going to hammer the API under load?
+/psst h what's the exit code convention we settled on?
+```
+
+`/psst` takes a short or long name as its first word. If it names your session model, that model just answers. Any other model gets a focused brief from your session model and answers in an isolated subagent. The shortcuts are the faster path for Sonnet, Opus, and Fable: they switch models for one turn and keep full context.
 
 Questions get answered, tasks (edits, test runs, log digging) get done, and offhand remarks get a normal reply. Unlike `/btw`, these can use tools, and the exchange stays in your history.
 
@@ -50,7 +59,7 @@ From the [Walang Studio marketplace](https://github.com/walangstudio/marketplace
 /plugin install psst@walangstudio
 ```
 
-Plugin commands are namespaced, so `/psst:o` always works if another `/o` is taken.
+Plugin commands are namespaced: `/psst:psst opus ...`, `/psst:o ...`, `/psst:h ...` and so on.
 
 Or copy the commands into `~/.claude/commands` directly:
 
@@ -59,7 +68,7 @@ Or copy the commands into `~/.claude/commands` directly:
 ./install.ps1     # Windows
 ```
 
-Set `CLAUDE_COMMANDS_DIR` to install somewhere else. These are copies, not symlinks, so re-run after pulling.
+That gives you the bare names: `/psst`, `/o`, `/h`. Set `CLAUDE_COMMANDS_DIR` to install somewhere else. These are copies, not symlinks, so re-run after pulling.
 
 ## Testing
 
@@ -72,6 +81,8 @@ Narrow it down:
 ```
 SESSIONS=opus CMDS=h SCENARIOS=suite JOBS=4 MAX_WORDS=150 ./test.sh
 ```
+
+Add `ps ph po pf` to `CMDS` to run the same cells through `/psst s|h|o|f`.
 
 Fable needs usage credits on some accounts. Skip it with `SESSIONS="haiku sonnet opus" CMDS="s h o"`.
 
