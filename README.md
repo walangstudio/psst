@@ -1,6 +1,6 @@
 # psst
 
-[![version](https://img.shields.io/badge/version-0.2.1-blue)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.2.2-blue)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 **Please Send Smarter Thoughts.**
@@ -57,18 +57,20 @@ From the [Walang Studio marketplace](https://github.com/walangstudio/marketplace
 ```
 /plugin marketplace add walangstudio/marketplace
 /plugin install psst@walangstudio
+/reload-plugins
 ```
 
 Plugin commands are namespaced: `/psst:psst opus ...`, `/psst:o ...`, `/psst:h ...` and so on.
 
-Or copy the commands into `~/.claude/commands` directly:
+Update to the latest release:
 
 ```
-./install.sh      # Linux/macOS
-./install.ps1     # Windows
+/plugin marketplace update walangstudio
+/plugin update psst
+/reload-plugins
 ```
 
-That gives you the bare names: `/psst`, `/o`, `/h`. Set `CLAUDE_COMMANDS_DIR` to install somewhere else. These are copies, not symlinks, so re-run after pulling.
+Or turn on auto-update for the walangstudio marketplace in `/plugin` -> Marketplaces.
 
 ## Testing
 
