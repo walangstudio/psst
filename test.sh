@@ -5,19 +5,21 @@
 #   suite   run a noisy failing test suite (30k lines), report the 2 failures
 #   edit    change a config value to the number agreed earlier in the session
 #   remark  a plain comment, no question or task: short natural reply, no tool use in the main session
+#   whoami  ask which model is answering; the reply must name the target
 # Every cell also asserts: the raw bulk stayed out of the session, the reply is short,
 # the expected model ran per the transcript (an untagged reply only warns) (inline, or in a subagent for /h from a bigger session).
 # Fable needs usage credits on some accounts: drop it with SESSIONS="haiku sonnet opus" CMDS="s h o".
-# Narrow with SESSIONS="opus" CMDS="h" SCENARIOS="suite" JOBS=4 MAX_WORDS=200 (default cap per scenario: recall 60, remark 120, edit/log 150, suite 250).
+# Narrow with SESSIONS="opus" CMDS="h" SCENARIOS="suite" JOBS=4 MAX_WORDS=200 (default cap per scenario: recall 60, whoami 40, remark 120, edit/log 150, suite 250).
 # ps ph po pf in CMDS run /psst <s|h|o|f> instead of the shortcut: CMDS="po ph".
 set -uo pipefail
-cmds=$(dirname "$0")/commands
+export MSYS_NO_PATHCONV=1  # Git Bash would rewrite "/s ..." into a Windows path
+cmds=$(cd "$(dirname "$0")" && pwd)/commands; export cmds
 for p in sonnet:s haiku:h opus:o fable:f; do
   cmp -s "$cmds/${p%%:*}.md" "$cmds/${p##*:}.md" || { echo "FAIL commands/${p##*:}.md drifted from ${p%%:*}.md"; exit 1; }
 done
 SESSIONS=${SESSIONS:-haiku sonnet opus fable}
 CMDS=${CMDS:-s h o f}
-SCENARIOS=${SCENARIOS:-recall log suite edit remark}
+SCENARIOS=${SCENARIOS:-recall log suite edit remark whoami}
 export MAX_WORDS=${MAX_WORDS:-}
 work=$(mktemp -d /tmp/ms-test.XXXXXX)
 export work
@@ -28,7 +30,7 @@ cell() {
   local key=${c#p} run="/$c"
   [[ $c == p? ]] && run="/psst $key"
   local target=${full[$key]} dir=$work/$sm-$c-$sc
-  mkdir -p "$dir"
+  mkdir -p "$dir/.claude/commands"; cp "$cmds"/*.md "$dir/.claude/commands/"
   cd "$dir" || return
   local word="W$RANDOM$RANDOM" limit=$((RANDOM % 90 + 10)) why=() ask
   local sid
@@ -38,6 +40,7 @@ cell() {
 
   case $sc in
     recall) ask="what is our project codename?" ;;
+    whoami) ask="which Claude model are you? one word" ;;
     remark) ask="btw I think the codename sounds a bit robotic, honestly" ;;
     log)
       awk 'BEGIN{for(i=1;i<=20000;i++){if(i==4242)print "ERROR E4242X disk full";else if(i==17000)print "ERROR E17000Y timeout";else print "INFO filler line " i}}' > "$dir/app.log"
@@ -69,6 +72,10 @@ EOS
 
   case $sc in
     recall) [[ $reply == *"$word"* ]] || why+=("codename missing") ;;
+    whoami)
+      local body=${reply//"[${target^}]"/}; body=${body,,}
+      [[ $body == *"$target"* ]] || why+=("did not say $target")
+      for m in sonnet haiku opus fable; do [[ $m == "$target" || $body != *"$m"* ]] || why+=("said $m"); done ;;
     remark)
       [[ -n ${reply// /} ]] || why+=("empty reply")
       local tools
@@ -93,7 +100,7 @@ EOS
   dumped=$(grep -oE "INFO filler line|PASS filler_test" "$file" 2>/dev/null | wc -l)
   (( dumped < 100 )) || why+=("bulk in session: $dumped lines")
   words=$(wc -w <<<"$reply")
-  local -A cap=([recall]=60 [remark]=120 [edit]=150 [log]=150 [suite]=250)
+  local -A cap=([recall]=60 [whoami]=40 [remark]=120 [edit]=150 [log]=150 [suite]=250)
   local max=${MAX_WORDS:-${cap[$sc]}}
   (( words <= max )) || why+=("reply $words > $max words")
 
