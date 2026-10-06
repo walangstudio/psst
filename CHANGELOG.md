@@ -3,6 +3,7 @@
 ## [0.2.2] - 2026-10-06
 
 - Install through the walangstudio marketplace only: `install.sh` and `install.ps1` are gone. README gains update steps.
+- README, plugin description and the `/psst:psst` usage line use the namespaced `/psst:` names that plugin installs actually give.
 
 ## [0.2.1] - 2026-10-06
 

@@ -10,8 +10,8 @@ You're deep in a Claude Code session and want a second opinion. Maybe Opus on a 
 psst lets you lean over and whisper the question instead:
 
 ```
-/o is this retry loop going to hammer the API under load?
-/h what's the exit code convention we settled on?
+/psst:o is this retry loop going to hammer the API under load?
+/psst:h what's the exit code convention we settled on?
 ```
 
 The other model answers with your session's context. Your session model stays put. The reply comes back tagged `[Opus]`, `[Haiku]`, etc., so you always know who said what.
@@ -20,19 +20,19 @@ The other model answers with your session's context. Your session model stays pu
 
 | Short | Long | Asks |
 |---|---|---|
-| `/s` | `/sonnet` | Sonnet |
-| `/h` | `/haiku` | Haiku |
-| `/o` | `/opus` | Opus |
-| `/f` | `/fable` | Fable |
+| `/psst:s` | `/psst:sonnet` | Sonnet |
+| `/psst:h` | `/psst:haiku` | Haiku |
+| `/psst:o` | `/psst:opus` | Opus |
+| `/psst:f` | `/psst:fable` | Fable |
 
 Or name the model as you go:
 
 ```
-/psst opus is this retry loop going to hammer the API under load?
-/psst h what's the exit code convention we settled on?
+/psst:psst opus is this retry loop going to hammer the API under load?
+/psst:psst h what's the exit code convention we settled on?
 ```
 
-`/psst` takes a short or long name as its first word. If it names your session model, that model just answers. Any other model gets a focused brief from your session model and answers in an isolated subagent. The shortcuts are the faster path for Sonnet, Opus, and Fable: they switch models for one turn and keep full context.
+`/psst:psst` takes a short or long name as its first word. If it names your session model, that model just answers. Any other model gets a focused brief from your session model and answers in an isolated subagent. The shortcuts are the faster path for Sonnet, Opus, and Fable: they switch models for one turn and keep full context.
 
 Questions get answered, tasks (edits, test runs, log digging) get done, and offhand remarks get a normal reply. Unlike `/btw`, these can use tools, and the exchange stays in your history.
 
@@ -44,9 +44,9 @@ Haiku needs special handling. Its window is 200K, smaller than the 1M the others
 
 | From -> to | What happens |
 |---|---|
-| any -> `/s` `/o` `/f` | one-turn model switch with full context and tools |
-| Haiku -> `/h` | Haiku just answers |
-| Sonnet/Opus/Fable -> `/h` | your session model writes Haiku a focused brief, an isolated Haiku subagent answers, the reply is relayed as-is |
+| any -> `/psst:s` `/psst:o` `/psst:f` | one-turn model switch with full context and tools |
+| Haiku -> `/psst:h` | Haiku just answers |
+| Sonnet/Opus/Fable -> `/psst:h` | your session model writes Haiku a focused brief, an isolated Haiku subagent answers, the reply is relayed as-is |
 
 If you run with `CLAUDE_CODE_DISABLE_1M_CONTEXT=1`, every model is 200K and this still holds.
 
@@ -60,7 +60,7 @@ From the [Walang Studio marketplace](https://github.com/walangstudio/marketplace
 /reload-plugins
 ```
 
-Plugin commands are namespaced: `/psst:psst opus ...`, `/psst:o ...`, `/psst:h ...` and so on.
+Claude Code namespaces plugin commands, so every command starts with `/psst:`.
 
 Update to the latest release:
 
