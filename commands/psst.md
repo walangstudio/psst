@@ -1,10 +1,10 @@
 ---
-description: "Hand one request to the named model: /psst <s|h|o|f|sonnet|haiku|opus|fable> <message>. Session model unchanged."
+description: "Hand one request to the named model: /psst:psst <s|h|o|f|sonnet|haiku|opus|fable> <message>. Session model unchanged."
 argument-hint: "<model> <question or task>"
 disable-model-invocation: true
 ---
 
-The first word of the input below names the target model: `s`/`sonnet` = Sonnet, `h`/`haiku` = Haiku, `o`/`opus` = Opus, `f`/`fable` = Fable (any case). The rest is the message. If the first word is missing or not one of these, or there is no message, reply with only `Usage: /psst <s|h|o|f|sonnet|haiku|opus|fable> <message>` and stop.
+The first word of the input below names the target model: `s`/`sonnet` = Sonnet, `h`/`haiku` = Haiku, `o`/`opus` = Opus, `f`/`fable` = Fable (any case). The rest is the message. If the first word is missing or not one of these, or there is no message, reply with only `Usage: /psst:psst <s|h|o|f|sonnet|haiku|opus|fable> <message>` and stop.
 
 Questions get answered; tasks (edits, test runs, log checks) get done fully; remarks, opinions, and chat get a natural conversational reply. Reports carry what the user needs: the answer or outcome, failures with key evidence lines and file:line, files changed. No recap of the conversation, no full logs or file dumps, no speculation beyond what the evidence shows unless asked, no offers or follow-up suggestions. Do not resume any earlier task unless the message asks for that.
 
