@@ -12,6 +12,6 @@ Everything this turn produces stays in the session history, so keep raw bulk out
 - Otherwise keep tool output small: grep, head, tail, line ranges.
 - Report what the user needs: the answer or outcome, failures with the key evidence lines and file:line, files changed. No recap of the conversation, no full logs or file dumps, no speculation beyond what the evidence shows unless asked, no offers or follow-up suggestions.
 
-Start the reply with `[Opus]`.
+This turn runs on Claude Opus. The system prompt's model line names the session model, not you: if asked which model you are, say Opus. Start the reply with `[Opus]`.
 
 $ARGUMENTS

@@ -1,6 +1,6 @@
 # psst
 
-[![version](https://img.shields.io/badge/version-0.2.0-blue)](CHANGELOG.md)
+[![version](https://img.shields.io/badge/version-0.2.1-blue)](CHANGELOG.md)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 **Please Send Smarter Thoughts.**
@@ -72,9 +72,9 @@ That gives you the bare names: `/psst`, `/o`, `/h`. Set `CLAUDE_COMMANDS_DIR` to
 
 ## Testing
 
-`./test.sh` (Linux) runs the real thing: 4 session models x 4 commands x 5 scenarios, 8 at a time. It spends real tokens.
+`./test.sh` (Linux) runs the real thing: 4 session models x 4 commands x 6 scenarios, 8 at a time. It spends real tokens.
 
-Scenarios: recall a fact from earlier, reply to a passing remark, scan a 20k-line log, run a noisy failing test suite, edit a config. Each cell checks the right model ran, the reply stayed short, and no bulk leaked into the session. Cells run in throwaway dirs, so your real projects and memory are untouched.
+Scenarios: recall a fact from earlier, reply to a passing remark, scan a 20k-line log, run a noisy failing test suite, edit a config, ask which model is answering. Each cell checks the right model ran, the reply stayed short, and no bulk leaked into the session. Cells run in throwaway dirs, so your real projects and memory are untouched.
 
 Narrow it down:
 

@@ -1,7 +1,7 @@
 {
   "name": "psst",
   "description": "Please Send Smarter Thoughts: ask Sonnet, Haiku, Opus, or Fable one question from inside any Claude Code session without switching models. /psst <model> <message>, or the shortcuts /s /h /o /f (/sonnet /haiku /opus /fable). Replies are tagged and short, and noisy work runs in a subagent so the session never compacts.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": {
     "name": "scr1p7k177y",
     "email": "scriptkitty@walang.studio"
